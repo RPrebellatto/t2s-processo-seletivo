@@ -10,7 +10,7 @@ import java.sql.Statement;
 public class ConnectionServer {
 
 	public static void main(String[] args) {
-		String jbdcURL = "jdbc:postgresql://127.0.0.1:5432/t2s_pseletivo";
+		String jbdcURL = "jdbc:postgresql://191.238.218.44:5432/t2s_pseletivo";
 		String username = "postgres";
 		String password = "admin";
 		
@@ -24,7 +24,7 @@ public class ConnectionServer {
 			PreparedStatement preparedstatement = connection.prepareStatement(sql);
 			
 			preparedstatement.setString(1, "MSC");
-			preparedstatement.setString(2, "POPA5584123");
+			preparedstatement.setString(2, "DOPK5584123");
 			preparedstatement.setInt(3, 40);
 			preparedstatement.setString(4, "cheio");
 			preparedstatement.setString(5, "exportação");
