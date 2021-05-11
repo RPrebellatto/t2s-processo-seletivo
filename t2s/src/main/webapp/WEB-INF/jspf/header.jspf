@@ -1,0 +1,30 @@
+<%@ page pageEncoding="UTF-8"%>
+
+<div class="row p-3 my-3 bg-primary text-white">
+	<div class="col-sm-8">
+		<h1>T2S</h1>
+		<h2>Soluções em Tecnologia Portuária</h2>
+	</div>
+	<div class="col-sm-4">
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-1">
+	</div>
+	<div class="col-sm-3">
+		<ul>
+			<li style="display:inline-block;"><h3><a href="index.jsp">Home</a></h3> </li>
+			<li style="display:inline-block;"><h3><a href="about.jsp">Sobre</a></h3></li>
+		</ul>
+	</div>
+	<div class="col-sm-8">
+	</div>
+</div>
+<div class="row">
+	<div class="col">
+	</div>
+	<div class="col">
+		<%@include file="menu.jspf" %>
+	</div>
+</div>
+</nav>

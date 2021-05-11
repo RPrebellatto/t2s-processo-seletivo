@@ -1,0 +1,142 @@
+<%@ page pageEncoding="UTF-8"%>
+<%@page import="java.sql.*" %>
+<%@page import="java.util.*" %>
+
+<%
+
+final String jbdcURL2 = "jdbc:postgresql://127.0.0.1:5432/t2s_pseletivo";
+final String username2 = "postgres";
+final String password2 = "admin";
+
+//Cadastramento de usuário no banco de dados
+String usuarioInput= null;
+String emailInput= null;
+String senhaInput= null;
+
+
+try{
+	usuarioInput = request.getParameter("nome_usuario").toString();
+	emailInput = request.getParameter("email_usuario").toString();
+	senhaInput = request.getParameter("senha_usuario").toString();
+	
+	Connection connection = DriverManager.getConnection(jbdcURL2,username2,password2);
+	
+	String sql = "INSERT INTO usuario (nome_usuario, email, senha)"
+			+ "VALUES (?,?,?)";
+	
+	PreparedStatement preparedstatement = connection.prepareStatement(sql);
+	
+	preparedstatement.setString(1, usuarioInput);
+	preparedstatement.setString(2, emailInput);
+	preparedstatement.setString(3, senhaInput);
+	
+	int rows = preparedstatement.executeUpdate();
+	if(rows > 0) {
+		
+		connection.close();
+	}
+}
+catch (Exception ex){
+	
+}
+
+
+//Login
+
+String emailLog= null;
+String senhaLog= null;
+
+String errorLog = null;
+String nomeUsuario = null;
+String emailUsuario = null;
+String senhaUsuario = null; 
+
+if (request.getParameter("login")!=null){
+	try{	
+		emailLog = request.getParameter("emailLogin").toString();
+		senhaLog = request.getParameter("passwordLogin").toString();
+		
+	  	Connection connection = DriverManager.getConnection(jbdcURL2,username2,password2);
+	  	
+		PreparedStatement preparedstatement = connection.prepareStatement("SELECT * FROM usuario WHERE email = ? AND senha = ?;");
+		
+		preparedstatement.setString(1, emailLog);
+		preparedstatement.setString(2, senhaLog);
+		
+		ResultSet result = preparedstatement.executeQuery();
+		
+		while(result.next()){
+			nomeUsuario = result.getString("nome_usuario");
+			emailUsuario = result.getString("email");
+			senhaUsuario = result.getString("senha"); 
+			
+		
+		if(result != null){
+		    session.setAttribute("session.usuario", request.getParameter(nomeUsuario));
+		    session.setAttribute("session.email", request.getParameter(emailUsuario));
+		    session.setAttribute("user.log", "true");
+		   //TODO test close before redirect
+		    response.sendRedirect(request.getRequestURI());
+		    connection.close();
+		}
+	}
+	}
+	catch(Exception ex){
+		errorLog="Usuário inválido";
+	}
+}
+//logout via botão Sair
+else if (request.getParameter("session.logout") != null){
+   	session.removeAttribute("session.usuario");
+   	session.setAttribute("user.log", "false");
+    response.sendRedirect(request.getRequestURI());
+}
+//Acesso ao formulário de cadastramento de usuário
+else if (request.getParameter("session.sign-in") != null){
+	request.setAttribute("session.sign-in", request.getParameter("session.sign-in"));
+}
+
+%>
+
+<%
+//TODO Correção session.getAttribute
+
+//Validação de usuário logado
+if (session.getAttribute("user.log") == "true"){  %>
+
+<div class="row">
+	<div class="col-sm-8">
+	</div>
+	<div class="col-sm-2">
+		<form>
+			<input type="submit" name="session.logout" value="Sair">
+		</form>
+	</div>
+</div>
+<%} else { %>
+
+<div class="row">
+	<div class="col-sm-1">
+	</div>
+	<div class="col-sm-10">
+		<form>
+			Email <input type="email" name="emailLogin">
+			Senha <input type="text" name="passwordLogin">
+			<input type="submit" name="login" value="Login">
+		</form>
+		<%if (errorLog != null){ %><h2><%= errorLog %></h2><%} %>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-5">
+	</div>
+	<div class="col-sm-7">
+		<form action="">
+			Ainda não possui cadastro?
+			<input type="submit" name="session.sign-in" value="Cadastre-se">
+		</form>
+	</div>
+</div>
+
+	
+<%} %>
