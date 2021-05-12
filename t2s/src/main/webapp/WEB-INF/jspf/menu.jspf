@@ -69,17 +69,17 @@ if (request.getParameter("login")!=null){
 			nomeUsuario = result.getString("nome_usuario");
 			emailUsuario = result.getString("email");
 			senhaUsuario = result.getString("senha"); 
-			
+		}	
 		
 		if(result != null){
-		    session.setAttribute("session.usuario", request.getParameter(nomeUsuario));
-		    session.setAttribute("session.email", request.getParameter(emailUsuario));
+		    session.setAttribute("session.usuario", nomeUsuario);
+		    session.setAttribute("session.email", emailUsuario);
 		    session.setAttribute("user.log", "true");
 		   //TODO test close before redirect
 		    response.sendRedirect(request.getRequestURI());
 		    connection.close();
+		
 		}
-	}
 	}
 	catch(Exception ex){
 		errorLog="Usuário inválido";
@@ -92,8 +92,8 @@ else if (request.getParameter("session.logout") != null){
     response.sendRedirect(request.getRequestURI());
 }
 //Acesso ao formulário de cadastramento de usuário
-else if (request.getParameter("session.sign-in") != null){
-	request.setAttribute("session.sign-in", request.getParameter("session.sign-in"));
+else if (request.getParameter("btn-sign-in") != null){
+	request.setAttribute("btn-sign-in", request.getParameter("btn-sign-in"));
 }
 
 %>
@@ -106,19 +106,43 @@ if (session.getAttribute("user.log") == "true"){  %>
 
 <div class="row">
 	<div class="col-sm-8">
+		<ul class="nav">
+  			<li class="nav-item">
+    			<a class="nav-link" href="index.jsp"><h4>Home</h4></a>
+  			</li>
+			<li class="nav-item">
+			    <a class="nav-link" href="about.jsp"><h4>Sobre Nós</h4></a>
+			</li>
+
+		</ul>
 	</div>
-	<div class="col-sm-2">
+	<div class="col-sm-3 text-right">
+		<%if(session.getAttribute("session.usuario")!= null){ %>
+			<h4>Olá, <%= session.getAttribute("session.usuario") %>!</h4>	
+		<%} else{ %>
+			<h4>Bem vindo!</h4>
+		<%} %>
+	</div>
+	<div class="col-sm-1">
 		<form>
-			<input type="submit" name="session.logout" value="Sair">
+			<button type="submit" name="session.logout" class="btn btn-primary">Sair</button>
 		</form>
 	</div>
 </div>
 <%} else { %>
-
 <div class="row">
-	<div class="col-sm-1">
+	<div class="col-sm-7">
+		<ul class="nav">
+  			<li class="nav-item">
+    			<a class="nav-link" href="index.jsp"><h4>Home</h4></a>
+  			</li>
+			<li class="nav-item">
+			    <a class="nav-link" href="about.jsp"><h4>Sobre Nós</h4></a>
+			</li>
+
+		</ul>
 	</div>
-	<div class="col-sm-10">
+	<div class="col-sm-5">
 		<form>
 			Email <input type="email" name="emailLogin">
 			Senha <input type="text" name="passwordLogin">
@@ -127,13 +151,14 @@ if (session.getAttribute("user.log") == "true"){  %>
 		<%if (errorLog != null){ %><h2><%= errorLog %></h2><%} %>
 	</div>
 </div>
+
 <div class="row">
-	<div class="col-sm-5">
+	<div class="col-sm-9">
 	</div>
-	<div class="col-sm-7">
+	<div class="col-sm-3">
 		<form action="">
-			Ainda não possui cadastro?
-			<input type="submit" name="session.sign-in" value="Cadastre-se">
+			<label for="btn-sign-in">Ainda não possui cadastro?</label>
+			<button type="submit" name="btn-sign-in" class="btn btn-primary">Cadastre-se</button>
 		</form>
 	</div>
 </div>

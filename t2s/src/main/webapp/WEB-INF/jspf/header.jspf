@@ -9,21 +9,7 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-sm-1">
-	</div>
-	<div class="col-sm-3">
-		<ul>
-			<li style="display:inline-block;"><h3><a href="index.jsp">Home</a></h3> </li>
-			<li style="display:inline-block;"><h3><a href="about.jsp">Sobre</a></h3></li>
-		</ul>
-	</div>
-	<div class="col-sm-8">
-	</div>
-</div>
-<div class="row">
-	<div class="col">
-	</div>
-	<div class="col">
+	<div class="col-sm-12">
 		<%@include file="menu.jspf" %>
 	</div>
 </div>

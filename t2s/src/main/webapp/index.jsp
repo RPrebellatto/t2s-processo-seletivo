@@ -32,7 +32,7 @@ String errorMessage = null;
 //Cadastramento de container no banco de dados
 try{
 	clienteInput = request.getParameter("cliente").toString();
-	nrContainerInput = request.getParameter("nr_container").toString();
+	nrContainerInput = request.getParameter("nr_container").toString().toUpperCase();
 	tipoInput = Integer.parseInt(request.getParameter("tipo"));
 	statusInput = request.getParameter("status");
 	categoriaInput = request.getParameter("categoria");
@@ -80,36 +80,80 @@ catch (Exception ex){
 		</div>
 	</div>
 	<%if (session.getAttribute("user.log") == "true"){
-	%>	
+	%>
+		
+	<div class="row m-5">
+	<!-- <div class="row" style="border:1px solid black; width:45vw;"> -->
+		<div class="row">
+			<div class="col-sm-3">
+			</div>
+			<div class="col-sm-7 p-3 m-5 border border-1"  style="width:60vw;">
+				<div class="text-center p-3 m-3  text-primary rounded-sm">
+					<h3>Cadastrar Container</h3>
+				</div>
+					<!-- TODO: Validation checks past html inputs -->
+				<div class="row">
+					<div class="col-sm-1">
+					</div>
+					<div class="col-sm-7">
+						<form method="post" action="">
+							<div class="form-group">
+						  		<label for="cliente">Cliente</label>
+						  		<input type="text" class="form-control" id="cliente" name="cliente" required>
+						 	</div>
+						 	<div class="form-group">
+						  		<label for="nr_container">Número do Container</label>
+						  		<input type="text" class="form-control" id="nr_container" name="nr_container" placeholder="AAAA8888888" pattern="[A-Za-z]{4}[0-9]{7}" style="text-transform:uppercase;" required><br/>
+						 	</div>
+						 	<label for="tipo">Tipo: </label>
+						 	<div class="form-check-inline">
+						 		<label class="form-check-label" for="20">
+								<input type="radio" id="20" name="tipo" class="form-check-input" value=20 required>20</label>
+							</div>
+						 	<div class="form-check-inline" for="40">
+								<label class="form-check-label" for="40">
+								<input type="radio" id="40" name="tipo" class="form-check-input" value=40 required>40</label>
+						 	</div>
+						 	<br/>
+						 	<label for="status">Status: </label>
+						 	<div class="form-check-inline">
+						 		<label class="form-check-label" for="vazio">
+								<input type="radio" id="vazio" name="status" class="form-check-input" value="vazio" required>Vazio</label>
+							</div>
+						 	<div class="form-check-inline">
+						 		<label class="form-check-label" for="cheio">	
+								<input type="radio" id="cheio" name="status" class="form-check-input" value="cheio" required>Cheio</label>
+							</div>
+							<br/>
+							<label for="categoria">Categoria: </label>
+						 	<div class="form-check-inline">
+						 		<label class="form-check-label" for="imp">
+								<input type="radio" id="imp" name="categoria" class="form-check-input" value="importação" required>Importação</label>
+							</div>
+						 	<div class="form-check-inline">
+						 		<label class="form-check-label" for="exp">	
+								<input type="radio" id="exp" name="categoria" class="form-check-input" value="exportação" required>Exportação</label>
+							</div>
+							<div class="my-3 text-right">
+								<button type="submit" class="btn btn-primary">Submit</button>
+							</div>
+						</form>
+					</div>
+					<div class="col-sm-2">
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-2">
+			</div>
+		</div>
 	
-	<div style="border:1px solid black; width:45vw;">
-	<h3>Cadastrar Container</h3>
-	<form method="post" action="">
-	<!-- TODO: Validation checks past html inputs -->
-	Cliente <input type="text" name="cliente" required>
-	Número do Container <input type="text" name="nr_container" placeholder="AAAA8888888" pattern="[A-Za-z]{4}[0-9]{7}" style="text-transform:uppercase;" required><br/>
-	Tipo
-	<input type="radio" id="20" name="tipo" value=20 required><label for="20">20<label/>
-	<input type="radio" id="40" name="tipo" value=40 required><label for="40">40<label/><br/>
-	Status
-	<input type="radio" id="vazio" name="status" value="vazio" required><label for="vazio">Vazio<label/>
-	<input type="radio" id="cheio" name="status" value="cheio" required><label for="cheio">Cheio<label/><br/>
-	Categoria
-	<input type="radio" id="imp" name="categoria" value="importação" required><label for="imp">Importação<label/>
-	<input type="radio" id="exp" name="categoria" value="exportação" required><label for="exp">Exportação<label/>
-	<br/>
-	<input type="submit" value="Enviar">
-	</form>
-	
-	</div>
-	
-	<br/><br/>
+	<div class="row">
 	<%if(insertResponse != null){ %> <h3><%= insertResponse %></h3><%}%>
+	</div>
+
 	
-	<br/><br/>
-	
-	<table border="1">
-	<thead><td>Cliente</td><td>Container</td><td>Tipo</td><td>Status</td><td>Categoria</td></thead>
+	<table class="table table-hover border border-1">
+	<thead class="thead bg-primary text-white"><td>Cliente</td><td>Container</td><td>Tipo</td><td>Status</td><td>Categoria</td></thead>
 	<%
 		String sql = "SELECT * FROM container";
 		
@@ -139,26 +183,32 @@ catch (Exception ex){
 	
 	<%} 
 	//apresentação de input de Cadastramento de Usuário
-	else if(request.getAttribute("session.sign-in") !=null){ %>
+	else if(request.getAttribute("btn-sign-in") !=null){ %>
 	<div class="row">
 		<div class="col-sm-4">
 		</div>
 		<div class="col-sm-4">
-		<form>
-		  <div class="form-group">
-		  <label for="nome">Nome</label> <input type="text" class="form-control" id="nome" name="nome_usuario" required><br/>
-		  </div>
-		  <div class="form-group">
-		  <label for="email">Email</label> <input type="email" class="form-control" id="email" name="email_usuario" required><br/>
-		  </div>
-		  <div class="form-group">
-		  <label for="senha">Senha</label> <input type="password" class="form-control" id="senha" name="senha_usuario" required><br/>
-		  </div>
-			<input type="submit" name="criar_conta" value="Criar Conta">
-		</form>
+			<form>
+				<div class="form-group">
+					<label for="nome">Nome</label>
+					<input type="text" class="form-control" id="nome" name="nome_usuario" required><br/>
+				</div>
+			  	<div class="form-group">
+			  		<label for="email">Email</label>
+			  		<input type="email" class="form-control" id="email" name="email_usuario" required><br/>
+			  	</div>
+			  	<div class="form-group">
+			  		<label for="senha">Senha</label> 
+			  		<input type="password" class="form-control" id="senha" name="senha_usuario" required><br/>
+			  	</div>
+			  	<div class="text-right">
+					<button type="submit" name="btn-criar_conta" class="btn btn-primary">Cadastre-se</button>
+				</div>
+	 		</form>
 		</div>
 		<div class="col-sm-4">
 		</div>
+	</div>
 	</div>
 	<%} 
 	//Conteúdo fora de Session
@@ -167,15 +217,17 @@ catch (Exception ex){
 		<div class="col-sm-2">
 		</div>
 		<div class="col-sm-8">
+		<div class="card-body my-2">
 			<h2>Já conhece nossos serviços?</h2>
-			<h4>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
 			Ut quis aliquam est. Etiam hendrerit nulla nec pulvinar volutpat. 
 			Sed vitae vehicula nulla, id fermentum eros. Duis ut scelerisque sem, bibendum finibus lacus.
 			 Nam egestas rutrum blandit. Aliquam dui odio, luctus a vulputate at, cursus et tellus. 
 			 Proin sed turpis vitae tortor blandit luctus. 
 			 Phasellus ligula nibh, semper ut augue ut, varius faucibus tortor.
 			  Curabitur sed auctor leo, eu faucibus magna. Nunc dictum euismod magna. 
-			</h4>
+			</p>
+		</div>
 		</div>
 		<div class="col-sm-2">
 		</div>
