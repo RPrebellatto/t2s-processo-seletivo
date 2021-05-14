@@ -57,6 +57,26 @@ else { %>
 </p>
 </div>
 <div class="card-body">
+<h2>Nota de Atualização do Software 1.2.0</h2>
+</div>
+<div class="card-body">
+<h3>Geral</h3>
+<p>
+	Produto: T2S SGMC: Software de Gerenciamento de Movimentações de Containeres<br/>
+	Versão Atual: 1.2.0<br/>
+	Data de Lançamento: 14/05/2021
+</p>
+</div>
+<div class="card-body">
+<h3>Sumário do Lançamento</h3>
+<p>
+	O patch 1.2.0 vem com as seguintes funcionalidades:<br/>
+	- Correção da falha de acesso ao login;<br/>
+	- CRUD de Container Concluído;<br/>
+</p>
+</div>
+
+<div class="card-body">
 <h2>Nota de Atualização do Software 1.0.0</h2>
 </div>
 <div class="card-body">
@@ -87,13 +107,13 @@ else { %>
 <%} %>
 
 <div class="row">
-		<div class="col-sm-4">
-		</div>
-		<div class="col-sm-4">	
+		<!-- <div class="col-sm-4">
+		</div> -->
+		<div class="col-sm-12">	
 			<%@include file="WEB-INF/jspf/footer.jspf" %>
 		</div>
-		<div class="col-sm-4">
-	</div>
+	<!-- 	<div class="col-sm-4">
+	</div> -->
 	</div>
 </div>
 </body>

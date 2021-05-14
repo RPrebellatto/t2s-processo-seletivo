@@ -13,4 +13,3 @@
 		<%@include file="menu.jspf" %>
 	</div>
 </div>
-</nav>

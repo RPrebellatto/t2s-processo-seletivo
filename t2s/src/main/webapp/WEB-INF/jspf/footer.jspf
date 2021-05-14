@@ -1,10 +1,6 @@
 <%@ page pageEncoding="UTF-8"%>
 
-<div class="row p-3 my-3 text-primary">
-	<div class="col-sm-8">
+<div class="row p-3 my-3 text-primary text-center">
 		<h1>T2S</h1>
-		<h5><%= new java.util.Date() %></h5>
-	</div>
-	<div class="col-sm-4">
-	</div>
+	 <h5><%= new java.util.Date() %></h5>
 </div>

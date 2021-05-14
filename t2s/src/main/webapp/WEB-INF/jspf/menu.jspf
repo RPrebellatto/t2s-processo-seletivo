@@ -1,12 +1,9 @@
 <%@ page pageEncoding="UTF-8"%>
 <%@page import="java.sql.*" %>
 <%@page import="java.util.*" %>
+<%@page import="t2s.connection.ConnectionFactory" %>
 
 <%
-
-final String jbdcURL2 = "jdbc:postgresql://127.0.0.1:5432/t2s_pseletivo";
-final String username2 = "postgres";
-final String password2 = "admin";
 
 //Cadastramento de usuário no banco de dados
 String usuarioInput= null;
@@ -19,7 +16,8 @@ try{
 	emailInput = request.getParameter("email_usuario").toString();
 	senhaInput = request.getParameter("senha_usuario").toString();
 	
-	Connection connection = DriverManager.getConnection(jbdcURL2,username2,password2);
+	
+	Connection connection = ConnectionFactory.getConnection();
 	
 	String sql = "INSERT INTO usuario (nome_usuario, email, senha)"
 			+ "VALUES (?,?,?)";
@@ -42,49 +40,54 @@ catch (Exception ex){
 
 
 //Login
-
-String emailLog= null;
+//TODO Correção de acesso para usuários inválidos
+/* String emailLog= null;
 String senhaLog= null;
-
+ */
 String errorLog = null;
 String nomeUsuario = null;
 String emailUsuario = null;
 String senhaUsuario = null; 
 
-if (request.getParameter("login")!=null){
-	try{	
-		emailLog = request.getParameter("emailLogin").toString();
-		senhaLog = request.getParameter("passwordLogin").toString();
+ if (request.getParameter("login")!=null){
+	
+		String emailLog = request.getParameter("emailLogin").toString();
+		String senhaLog = request.getParameter("passwordLogin").toString();
 		
-	  	Connection connection = DriverManager.getConnection(jbdcURL2,username2,password2);
-	  	
-		PreparedStatement preparedstatement = connection.prepareStatement("SELECT * FROM usuario WHERE email = ? AND senha = ?;");
-		
-		preparedstatement.setString(1, emailLog);
-		preparedstatement.setString(2, senhaLog);
-		
-		ResultSet result = preparedstatement.executeQuery();
-		
-		while(result.next()){
-			nomeUsuario = result.getString("nome_usuario");
-			emailUsuario = result.getString("email");
-			senhaUsuario = result.getString("senha"); 
-		}	
-		
-		if(result != null){
-		    session.setAttribute("session.usuario", nomeUsuario);
-		    session.setAttribute("session.email", emailUsuario);
-		    session.setAttribute("user.log", "true");
-		   //TODO test close before redirect
-		    response.sendRedirect(request.getRequestURI());
-		    connection.close();
-		
+	//if(emailLog != null && senhaLog != null && !emailLog.isEmpty() && !senhaLog.isEmpty()){
+			
+		try{
+		  	Connection connection = ConnectionFactory.getConnection();
+		  	
+			PreparedStatement preparedstatement = connection.prepareStatement("SELECT * FROM usuario WHERE email = ? AND senha = ?;");
+			
+			preparedstatement.setString(1, emailLog);
+			preparedstatement.setString(2, senhaLog);
+			
+			ResultSet result = preparedstatement.executeQuery();
+			
+			while(result.next()){
+				nomeUsuario = result.getString("nome_usuario");
+				emailUsuario = result.getString("email");
+				senhaUsuario = result.getString("senha"); 
+			}	
+			if(emailUsuario.equals(emailLog) && senhaUsuario.equals(senhaLog)){
+			//if(result != null){
+			    session.setAttribute("session.usuario", nomeUsuario);
+			    session.setAttribute("session.email", emailUsuario);
+			    session.setAttribute("user.log", "true");
+			   //TODO test close before redirect
+			    response.sendRedirect(request.getRequestURI());
+			    connection.close();
+			
+			}
 		}
-	}
+	
 	catch(Exception ex){
 		errorLog="Usuário inválido";
 	}
 }
+//}
 //logout via botão Sair
 else if (request.getParameter("session.logout") != null){
    	session.removeAttribute("session.usuario");
@@ -117,10 +120,8 @@ if (session.getAttribute("user.log") == "true"){  %>
 		</ul>
 	</div>
 	<div class="col-sm-3 text-right">
-		<%if(session.getAttribute("session.usuario")!= null){ %>
+		<%if(session.getAttribute("user.log").equals("true")){ %>
 			<h4>Olá, <%= session.getAttribute("session.usuario") %>!</h4>	
-		<%} else{ %>
-			<h4>Bem vindo!</h4>
 		<%} %>
 	</div>
 	<div class="col-sm-1">
@@ -144,11 +145,11 @@ if (session.getAttribute("user.log") == "true"){  %>
 	</div>
 	<div class="col-sm-5">
 		<form>
-			Email <input type="email" name="emailLogin">
-			Senha <input type="text" name="passwordLogin">
+			Email <input type="email" placeholder="xxx@mail.com" name="emailLogin" required>
+			Senha <input type="password" name="passwordLogin" required>
 			<input type="submit" name="login" value="Login">
 		</form>
-		<%if (errorLog != null){ %><h2><%= errorLog %></h2><%} %>
+		<%if (errorLog != null){ %><h5 class="text-center" style="color:red;"><%= errorLog %></h5><%} %>
 	</div>
 </div>
 

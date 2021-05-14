@@ -1,0 +1,215 @@
+<%@ page pageEncoding="UTF-8"%>
+<%@page import="java.sql.*" %>
+<%@page import="java.util.*" %>
+<%@page import="t2s.connection.ConnectionFactory" %>
+
+<!-- Cadastramento de container no banco de dados	 -->
+<%
+	String insertResponse=null;
+	String errorMessage = null;
+	
+	try{
+		String clienteInput = request.getParameter("cliente").toString();
+		String nrContainerInput = request.getParameter("nr_container").toString().toUpperCase();
+		String tipoInput = request.getParameter("tipo").toString();
+		String statusInput = request.getParameter("status");
+		String categoriaInput = request.getParameter("categoria");
+		
+		Connection connection = ConnectionFactory.getConnection();
+		
+		String sql = "INSERT INTO container (cliente, numero_container, tipo_20_40, status_vazio_cheio, categoria_imp_exp)"
+				+ "VALUES (?,?,?,?,?)";
+		
+		PreparedStatement preparedstatement = connection.prepareStatement(sql);
+		
+		preparedstatement.setString(1, clienteInput);
+		preparedstatement.setString(2, nrContainerInput);
+		preparedstatement.setString(3, tipoInput);
+		preparedstatement.setString(4, statusInput);
+		preparedstatement.setString(5, categoriaInput);
+		
+		int rows = preparedstatement.executeUpdate();
+		if(rows > 0) {
+			insertResponse = "Foi feita uma inclusão no banco";
+			connection.close();
+		}
+	}
+	catch (Exception ex){
+		errorMessage = "Dados inválidos";
+	}
+%>
+		<div class="row">
+			<div class="col-sm-3">
+			</div>
+			<div class="col-sm-7 p-3 m-5 border border-1"  style="width:60vw;">
+				<div class="text-center p-3 m-3  text-primary rounded-sm">
+					<h3>Cadastrar Container</h3>
+				</div>
+					<!-- TODO: Validation checks past html inputs -->
+				<div class="row">
+					<div class="col-sm-1">
+					</div>
+					<div class="col-sm-7">
+						<form method="post" action="">
+							<div class="form-group">
+						  		<label for="cliente">Cliente</label>
+						  		<input type="text" class="form-control" id="cliente" name="cliente" required>
+						 	</div>
+						 	<div class="form-group">
+						  		<label for="nr_container">Número do Container</label>
+						  		<input type="text" class="form-control" id="nr_container" name="nr_container" placeholder="AAAA8888888" pattern="[A-Za-z]{4}[0-9]{7}" style="text-transform:uppercase;" required><br/>
+						 	</div>
+						 	<label for="tipo">Tipo: </label>
+						 	<div class="form-check-inline">
+						 		<label class="form-check-label" for="20">
+								<input type="radio" id="20" name="tipo" class="form-check-input" value="20" required>20</label>
+							</div>
+						 	<div class="form-check-inline">
+								<label class="form-check-label" for="40">
+								<input type="radio" id="40" name="tipo" class="form-check-input" value="40" required>40</label>
+						 	</div>
+						 	<br/>
+						 	<label for="status">Status: </label>
+						 	<div class="form-check-inline">
+						 		<label class="form-check-label" for="vazio">
+								<input type="radio" id="vazio" name="status" class="form-check-input" value="vazio" required>Vazio</label>
+							</div>
+						 	<div class="form-check-inline">
+						 		<label class="form-check-label" for="cheio">	
+								<input type="radio" id="cheio" name="status" class="form-check-input" value="cheio" required>Cheio</label>
+							</div>
+							<br/>
+							<label for="categoria">Categoria: </label>
+						 	<div class="form-check-inline">
+						 		<label class="form-check-label" for="imp">
+								<input type="radio" id="imp" name="categoria" class="form-check-input" value="importação" required>Importação</label>
+							</div>
+						 	<div class="form-check-inline">
+						 		<label class="form-check-label" for="exp">	
+								<input type="radio" id="exp" name="categoria" class="form-check-input" value="exportação" required>Exportação</label>
+							</div>
+							<div class="my-3 text-right">
+								<button type="submit" class="btn btn-primary">Submit</button>
+							</div>
+						</form>
+					</div>
+					<div class="col-sm-2">
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-2">
+			</div>
+		</div>
+
+		
+<!-- Consulta Container -->		
+
+<div class="row">
+					<div class="col-sm-1">
+					</div>
+					<div class="col-sm-7">
+						<form method="post" action="">
+						 	<div class="form-group">
+						  		<label for="select-busca">Buscar por</label>
+						  		<select class="form-control" id="sel-busca" name="select-busca">
+						  			<option value="cliente">Cliente</option>
+						  			<option value="nr_container">Número</option>
+						  			<option value="tipo">Tipo</option>
+						  			<option value="status">Status</option>
+						  			<option value="categoria">Categoria</option>
+						  		</select>
+						  	</div>
+						  	<div class="form-group">
+						  		<label for="busca">Informe: </label>
+						  		<input type="text" class="form-control" id="ipt-busca" name="busca" >
+						 	</div>
+							<div class="my-3 text-right">
+								<button type="submit" class="btn btn-primary">Buscar</button>
+							</div>
+						</form>
+					</div>
+					<div class="col-sm-2">
+					</div>
+				</div>
+
+<table class="table table-hover border border-1">
+	<thead class="thead bg-primary text-white"><tr><th>Cliente</th><th>Container</th><th>Tipo</th><th>Status</th><th>Categoria</th><th>Opções</th></tr></thead>
+<%
+
+		String selectValue= null;
+		String selectInput= null;
+	    String errorMessageBusca= null;
+	    try{
+		selectValue = request.getParameter("select-busca").toString();
+		selectInput = request.getParameter("busca").toString();
+		String sql = null;
+		switch(selectValue){
+		case "cliente": sql = "SELECT * FROM container WHERE cliente like ?;";
+		break;
+		case "nr_container": sql = "SELECT * FROM container WHERE numero_container like ?";
+		break;
+		case "status": sql = "SELECT * FROM container WHERE status_vazio_cheio like ?";
+		break;
+		case "categoria": sql = "SELECT * FROM container WHERE categoria_imp_exp like ?;";
+		break;
+		case "tipo": sql = "SELECT * FROM container WHERE tipo_20_40 like ?;";
+		break;
+		}
+		
+		Connection connection = ConnectionFactory.getConnection();
+		
+		PreparedStatement preparedstatement = connection.prepareStatement(sql);
+		
+		preparedstatement.setString(1,"%"+ selectInput + "%");
+		
+		ResultSet result = preparedstatement.executeQuery();
+		
+		while (result.next()) {
+			String cliente = result.getString("cliente");
+			String numero = result.getString("numero_container");
+			String tipo = result.getString("tipo_20_40");
+			String status = result.getString("status_vazio_cheio");
+			String categoria = result.getString("categoria_imp_exp");
+			
+			%><tr>
+			<td type="hidden" value="<%= cliente %>"><%= cliente %> </td>
+			<td type="hidden" value="<%= numero %>"><%= numero %> </td>
+			<td type="hidden" value="<%= tipo %>"><%= tipo %> </td>
+			<td type="hidden" value="<%= status %>"><%= status %> </td>
+			<td type="hidden" value="<%= categoria %>"><%= categoria %> </td>
+			<td> <a href="update.jsp?&nrc=<%= numero %>&cli=<%= cliente %>&tpo=<%= tipo %>&sts=<%= status %>&ctg=<%= categoria %>" type="hidden" class="btn btn-outline-primary" name="ac" value="atualizar"role="button">Editar</a>
+			 <a href="index.jsp?&nrc=<%= numero %>" class="btn btn-outline-danger" name="ac" value="deletar"role="button">Deletar</a> 
+			 </td></tr>	
+	<%}	
+		connection.close();
+		 }
+		catch(Exception ex){
+			errorMessageBusca = "Não foi possível localizar o container nos registros"; 
+		}
+%>
+</table>
+<!-- Exclusão de Container	 -->	
+
+<% 
+String deleteInput= null;
+String errorMessageDelete= null;
+String deleteResposta = null;
+try{
+deleteInput = request.getParameter("nrc").toString();
+
+Connection connection = ConnectionFactory.getConnection();
+
+PreparedStatement preparedstatement = connection.prepareStatement("DELETE FROM container WHERE numero_container = ?");
+
+preparedstatement.setString(1, deleteInput);
+
+int rows = preparedstatement.executeUpdate();
+if(rows > 0) {
+	deleteResposta = "Excluído";
+}
+	connection.close();
+}
+catch(Exception ex){
+	errorMessageDelete = "Não foi possível localizar o container nos registros"; 
+}
+%>

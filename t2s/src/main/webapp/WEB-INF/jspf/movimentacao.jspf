@@ -1,0 +1,99 @@
+<%@ page pageEncoding="ISO-8859-1"%>
+<%@page import="java.sql.*" %>
+<%@page import="java.util.*" %>
+<%@page import="t2s.connection.ConnectionFactory" %>
+
+<!-- Cadastramento de Movimentações no banco de dados	 -->
+
+<%
+	String insertResponse=null;
+	String errorMessage = null;
+	
+	try{
+		String clienteInput = request.getParameter("cliente").toString();
+		String nrContainerInput = request.getParameter("nr_container").toString().toUpperCase();
+		String tipoInput = request.getParameter("tipo").toString();
+		String statusInput = request.getParameter("status");
+		String categoriaInput = request.getParameter("categoria");
+		
+		Connection connection = ConnectionFactory.getConnection();
+		
+		String sql = "INSERT INTO container (cliente, numero_container, tipo_20_40, status_vazio_cheio, categoria_imp_exp)"
+				+ "VALUES (?,?,?,?,?)";
+		
+		PreparedStatement preparedstatement = connection.prepareStatement(sql);
+		
+		preparedstatement.setString(1, clienteInput);
+		preparedstatement.setString(2, nrContainerInput);
+		preparedstatement.setString(3, tipoInput);
+		preparedstatement.setString(4, statusInput);
+		preparedstatement.setString(5, categoriaInput);
+		
+		int rows = preparedstatement.executeUpdate();
+		if(rows > 0) {
+			insertResponse = "Foi feita uma inclusão no banco";
+			connection.close();
+		}
+	}
+	catch (Exception ex){
+		errorMessage = "Dados inválidos";
+	}
+%>
+		<div class="row">
+			<div class="col-sm-3">
+			</div>
+			<div class="col-sm-7 p-3 m-5 border border-1"  style="width:60vw;">
+				<div class="text-center p-3 m-3  text-primary rounded-sm">
+					<h3>Cadastrar Movimentação</h3>
+				</div>
+					<!-- TODO: Validation checks past html inputs -->
+				<div class="row">
+					<div class="col-sm-1">
+					</div>
+					<div class="col-sm-7">
+						<form>
+							<div class="form-group">
+						  		<label for="c-mov">Container</label>
+						  		<input type="text" class="form-control" id="c-mov" name="c-mov" required>
+						 	</div>
+							<div class="form-group">
+							  <label for="i-mov">Tipo de Movimentação</label>
+							  <select class="form-control" required name="i-mov" id="i-mov">
+							    <option value="Embarque">Embarque</option>
+							    <option value="Descarga">Descarga</option>
+							    <option value="Gate In">Gate In</option>
+							    <option value="Gate Out">Gate Out</option>
+							    <option value="Posicionamento">Posicionamento</option>
+							    <option value="Pilha">Pilha</option>
+							    <option value="Pesagem">Pesagem</option>
+							    <option value="Scanner">Scanner</option>
+							  </select>
+							</div>
+							<div class="form-group">
+						  		<label for="hi-mov">Horário Início</label>
+						  		<input type="text" class="form-control" id="hi-mov"  placeholder="00:00" pattern="[0-9]{2}:[0-9]{2}" name="hi-mov" required>
+						 	</div>
+						 	<div class="form-group">
+						  		<label for="di-mov">Data Início</label>
+						  		<input type="text" class="form-control" id="di-mov" placeholder="YYYY-mm-dd" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" name="di-mov" required>
+						 	</div>
+						 	<div class="form-group">
+						  		<label for="hf-mov">Horário Fim</label>
+						  		<input type="text" class="form-control" id="hf-mov" placeholder="00:00" pattern="[0-9]{2}:[0-9]{2}" name="hf-mov" required>
+						 	</div>
+						 	<div class="form-group">
+						  		<label for="df-mov">Data Fim</label>
+						  		<input type="text" class="form-control" id="df-mov" placeholder="YYYY-mm-dd" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" name="df-mov" required>
+						 	</div>
+						 	<div class="my-3 text-right">
+								<button type="submit" class="btn btn-primary">Submit</button>
+							</div>
+						</form>
+					</div>
+					<div class="col-sm-2">
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-2">
+			</div>
+		</div>
