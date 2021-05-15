@@ -3,42 +3,101 @@
 <%@page import="java.util.*" %>
 <%@page import="t2s.connection.ConnectionFactory" %>
 
-<!-- Cadastramento de Movimentações no banco de dados	 -->
 
+<table class="table table-hover border border-1" id="c-tb">
+	<thead class="thead bg-primary text-white"><tr><th>Código</th><th>Container</th><th>Movimentação</th><th>Data de Início</th><th>Hora</th><th>Data Fim</th><th>Hora</th><th>Opções</th></tr></thead>
 <%
-	String insertResponse=null;
-	String errorMessage = null;
+
+		
+	    String errorMessageBusca= null;
+	    try{
+		
+		String sql = "SELECT * FROM movimentacao";
 	
-	try{
-		String clienteInput = request.getParameter("cliente").toString();
-		String nrContainerInput = request.getParameter("nr_container").toString().toUpperCase();
-		String tipoInput = request.getParameter("tipo").toString();
-		String statusInput = request.getParameter("status");
-		String categoriaInput = request.getParameter("categoria");
-		
 		Connection connection = ConnectionFactory.getConnection();
-		
-		String sql = "INSERT INTO container (cliente, numero_container, tipo_20_40, status_vazio_cheio, categoria_imp_exp)"
-				+ "VALUES (?,?,?,?,?)";
 		
 		PreparedStatement preparedstatement = connection.prepareStatement(sql);
 		
-		preparedstatement.setString(1, clienteInput);
-		preparedstatement.setString(2, nrContainerInput);
-		preparedstatement.setString(3, tipoInput);
-		preparedstatement.setString(4, statusInput);
-		preparedstatement.setString(5, categoriaInput);
+		ResultSet result = preparedstatement.executeQuery();
+		
+		while (result.next()) {
+			String id = result.getString("id");
+			String conmov = result.getString("container_mov");
+			String tipomov = result.getString("tipo_movimentacao");
+			String datai = result.getString("data_inicio");
+			String horai = result.getString("hora_inicio");
+			String dataf = result.getString("data_fim");
+			String horaf = result.getString("hora_fim");
+			
+			%><tr>
+			<td type="hidden" value="<%= id %>"><%= id %> </td>
+			<td type="hidden" value="<%= conmov %>"><%= conmov %> </td>
+			<td type="hidden" value="<%= tipomov %>"><%= tipomov %> </td>
+			<td type="hidden" value="<%= datai %>"><%= datai %> </td>
+			<td type="hidden" value="<%= horai %>"><%= horai %> </td>
+			<td type="hidden" value="<%= dataf %>"><%= dataf %> </td>
+			<td type="hidden" value="<%= horaf %>"><%= horaf %> </td>
+			<td> <a href="movimentacoes.jsp?&idmov=<%= id %>&contmov=<%= conmov %>&tpomov=<%= tipomov %>&dtmov=<%= datai %>&hoi=<%= horai %>&dtf=<%= dataf %>&hof=<%= horaf %>" type="hidden" class="btn btn-outline-primary" name="ac" value="atualizar"role="button">Editar</a>
+			 <a href="index.jsp?&nrc=<%= id %>" class="btn btn-outline-danger" name="acmov" value="deletarmov"role="button">Deletar</a> 
+			 </td></tr>	
+	<%}	
+		connection.close();
+		 }
+		catch(Exception ex){
+			errorMessageBusca = "Não foi possível localizar o container nos registros"; 
+		}
+%>
+</table>
+
+
+<!-- Cadastramento de Movimentações no banco de dados	 -->
+
+<%
+	if(request.getParameter("mov-env") !=null){
+	String insertResponse=null;
+	String errorMessage = null;
+	String movTipo = null; 
+	String movContainer = null;
+	String movHI = null;
+	String movDI = null;
+	String movHF = null;
+	String movDF = null;
+	
+	
+	try{
+		 movTipo = request.getParameter("i-mov").toString();
+		 movContainer = request.getParameter("c-mov").toString().toUpperCase();
+		 movHI = request.getParameter("hi-mov").toString();
+		 movDI = request.getParameter("di-mov").toString();
+		 movHF = request.getParameter("hf-mov").toString();
+		 movDF = request.getParameter("df-mov").toString();
+	 
+		Connection connection = ConnectionFactory.getConnection();
+		
+		PreparedStatement preparedstatement = connection.prepareStatement("INSERT INTO movimentacao VALUES (?, ?, ?, ?, ?, ?)");
+		
+		
+		preparedstatement.setString(1, movTipo);
+	 	preparedstatement.setString(2, movContainer);
+		preparedstatement.setString(3, movDI);
+		preparedstatement.setString(4, movHI);
+		preparedstatement.setString(5, movDF);
+		preparedstatement.setString(6, movHF);
+
 		
 		int rows = preparedstatement.executeUpdate();
 		if(rows > 0) {
-			insertResponse = "Foi feita uma inclusão no banco";
-			connection.close();
+			insertResponse = "Foi feita uma inclusão  de movimentações no banco";	
 		}
+		preparedstatement.close();
+		connection.close();
 	}
 	catch (Exception ex){
 		errorMessage = "Dados inválidos";
+		ex.getStackTrace();
 	}
-%>
+	}
+%> 	
 		<div class="row">
 			<div class="col-sm-3">
 			</div>
@@ -54,7 +113,7 @@
 						<form>
 							<div class="form-group">
 						  		<label for="c-mov">Container</label>
-						  		<input type="text" class="form-control" id="c-mov" name="c-mov" required>
+						  		<input type="text" class="form-control" id="c-mov" name="c-mov" value="<%=request.getParameter("nrc")%>" placeholder="AAAA8888888" pattern="[A-Za-z]{4}[0-9]{7}" style="text-transform:uppercase;" required>
 						 	</div>
 							<div class="form-group">
 							  <label for="i-mov">Tipo de Movimentação</label>
@@ -86,7 +145,7 @@
 						  		<input type="text" class="form-control" id="df-mov" placeholder="YYYY-mm-dd" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" name="df-mov" required>
 						 	</div>
 						 	<div class="my-3 text-right">
-								<button type="submit" class="btn btn-primary">Submit</button>
+								<button type="submit" name="mov-env" class="btn btn-primary">Cadastrar</button>
 							</div>
 						</form>
 					</div>
@@ -97,3 +156,6 @@
 			<div class="col-sm-2">
 			</div>
 		</div>
+		
+		
+		

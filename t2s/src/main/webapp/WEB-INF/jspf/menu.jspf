@@ -40,10 +40,7 @@ catch (Exception ex){
 
 
 //Login
-//TODO Correção de acesso para usuários inválidos
-/* String emailLog= null;
-String senhaLog= null;
- */
+
 String errorLog = null;
 String nomeUsuario = null;
 String emailUsuario = null;
@@ -54,7 +51,6 @@ String senhaUsuario = null;
 		String emailLog = request.getParameter("emailLogin").toString();
 		String senhaLog = request.getParameter("passwordLogin").toString();
 		
-	//if(emailLog != null && senhaLog != null && !emailLog.isEmpty() && !senhaLog.isEmpty()){
 			
 		try{
 		  	Connection connection = ConnectionFactory.getConnection();
@@ -72,11 +68,11 @@ String senhaUsuario = null;
 				senhaUsuario = result.getString("senha"); 
 			}	
 			if(emailUsuario.equals(emailLog) && senhaUsuario.equals(senhaLog)){
-			//if(result != null){
+
 			    session.setAttribute("session.usuario", nomeUsuario);
 			    session.setAttribute("session.email", emailUsuario);
 			    session.setAttribute("user.log", "true");
-			   //TODO test close before redirect
+		
 			    response.sendRedirect(request.getRequestURI());
 			    connection.close();
 			
@@ -87,8 +83,7 @@ String senhaUsuario = null;
 		errorLog="Usuário inválido";
 	}
 }
-//}
-//logout via botão Sair
+
 else if (request.getParameter("session.logout") != null){
    	session.removeAttribute("session.usuario");
    	session.setAttribute("user.log", "false");
@@ -102,7 +97,7 @@ else if (request.getParameter("btn-sign-in") != null){
 %>
 
 <%
-//TODO Correção session.getAttribute
+
 
 //Validação de usuário logado
 if (session.getAttribute("user.log") == "true"){  %>
@@ -114,7 +109,7 @@ if (session.getAttribute("user.log") == "true"){  %>
     			<a class="nav-link" href="index.jsp"><h4>Home</h4></a>
   			</li>
 			<li class="nav-item">
-			    <a class="nav-link" href="about.jsp"><h4>Sobre Nós</h4></a>
+			    <a class="nav-link" href="about.jsp"><h4>Sobre</h4></a>
 			</li>
 
 		</ul>
