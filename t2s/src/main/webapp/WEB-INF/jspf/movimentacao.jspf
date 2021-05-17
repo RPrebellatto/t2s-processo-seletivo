@@ -4,58 +4,12 @@
 <%@page import="t2s.connection.ConnectionFactory" %>
 
 
-<table class="table table-hover border border-1" id="c-tb">
-	<thead class="thead bg-primary text-white"><tr><th>Código</th><th>Container</th><th>Movimentação</th><th>Data de Início</th><th>Hora</th><th>Data Fim</th><th>Hora</th><th>Opções</th></tr></thead>
-<%
-
-		
-	    String errorMessageBusca= null;
-	    try{
-		
-		String sql = "SELECT * FROM movimentacao";
-	
-		Connection connection = ConnectionFactory.getConnection();
-		
-		PreparedStatement preparedstatement = connection.prepareStatement(sql);
-		
-		ResultSet result = preparedstatement.executeQuery();
-		
-		while (result.next()) {
-			String id = result.getString("id");
-			String conmov = result.getString("container_mov");
-			String tipomov = result.getString("tipo_movimentacao");
-			String datai = result.getString("data_inicio");
-			String horai = result.getString("hora_inicio");
-			String dataf = result.getString("data_fim");
-			String horaf = result.getString("hora_fim");
-			
-			%><tr>
-			<td type="hidden" value="<%= id %>"><%= id %> </td>
-			<td type="hidden" value="<%= conmov %>"><%= conmov %> </td>
-			<td type="hidden" value="<%= tipomov %>"><%= tipomov %> </td>
-			<td type="hidden" value="<%= datai %>"><%= datai %> </td>
-			<td type="hidden" value="<%= horai %>"><%= horai %> </td>
-			<td type="hidden" value="<%= dataf %>"><%= dataf %> </td>
-			<td type="hidden" value="<%= horaf %>"><%= horaf %> </td>
-			<td> <a href="movimentacoes.jsp?&idmov=<%= id %>&contmov=<%= conmov %>&tpomov=<%= tipomov %>&dtmov=<%= datai %>&hoi=<%= horai %>&dtf=<%= dataf %>&hof=<%= horaf %>" type="hidden" class="btn btn-outline-primary" name="ac" value="atualizar"role="button">Editar</a>
-			 <a href="index.jsp?&nrc=<%= id %>" class="btn btn-outline-danger" name="acmov" value="deletarmov"role="button">Deletar</a> 
-			 </td></tr>	
-	<%}	
-		connection.close();
-		 }
-		catch(Exception ex){
-			errorMessageBusca = "Não foi possível localizar o container nos registros"; 
-		}
-%>
-</table>
-
-
 <!-- Cadastramento de Movimentações no banco de dados	 -->
 
 <%
-	if(request.getParameter("mov-env") !=null){
-	String insertResponse=null;
-	String errorMessage = null;
+String insertMovResponse=null;
+String errorMessageInsertMov = null;
+	if(request.getParameter("btn-cadastrar-movimentacao") !=null){
 	String movTipo = null; 
 	String movContainer = null;
 	String movHI = null;
@@ -87,36 +41,40 @@
 		
 		int rows = preparedstatement.executeUpdate();
 		if(rows > 0) {
-			insertResponse = "Foi feita uma inclusão  de movimentações no banco";	
+			insertMovResponse = "Movimentação Cadastrada!";
+			response.sendRedirect("movimentacoes.jsp");
 		}
 		preparedstatement.close();
 		connection.close();
 	}
 	catch (Exception ex){
-		errorMessage = "Dados inválidos";
+		errorMessageInsertMov = "Não foi possível cadastrar a movimentação";
 		ex.getStackTrace();
 	}
 	}
 %> 	
-		<div class="row">
-			<div class="col-sm-3">
+	
+
+<div class="row">
+			<div class="col-sm-1">
 			</div>
-			<div class="col-sm-7 p-3 m-5 border border-1"  style="width:60vw;">
-				<div class="text-center p-3 m-3  text-primary rounded-sm">
+			<div class="col-sm-10 p-1 m-3 border border-1"> 
+				<div class="text-center  m-2  text-primary rounded-sm">
 					<h3>Cadastrar Movimentação</h3>
 				</div>
 					<!-- TODO: Validation checks past html inputs -->
 				<div class="row">
-					<div class="col-sm-1">
-					</div>
-					<div class="col-sm-7">
-						<form>
-							<div class="form-group">
-						  		<label for="c-mov">Container</label>
+					<div class="col-sm-12">
+						<form method="post" action="">
+						
+						<div class="row">
+						<div class="form-inline col-10">
+							<div class="form-group col-sm-3">
+						  		<label for="c-mov">Container </label>
 						  		<input type="text" class="form-control" id="c-mov" name="c-mov" value="<%=request.getParameter("nrc")%>" placeholder="AAAA8888888" pattern="[A-Za-z]{4}[0-9]{7}" style="text-transform:uppercase;" required>
 						 	</div>
-							<div class="form-group">
-							  <label for="i-mov">Tipo de Movimentação</label>
+						 	<div class="form-group col-sm-3">
+							  <label for="i-mov">Tipo de Movimentação </label>
 							  <select class="form-control" required name="i-mov" id="i-mov">
 							    <option value="Embarque">Embarque</option>
 							    <option value="Descarga">Descarga</option>
@@ -128,34 +86,206 @@
 							    <option value="Scanner">Scanner</option>
 							  </select>
 							</div>
-							<div class="form-group">
+					
+							<div class="form-group col-3">
 						  		<label for="hi-mov">Horário Início</label>
 						  		<input type="text" class="form-control" id="hi-mov"  placeholder="00:00" pattern="[0-9]{2}:[0-9]{2}" name="hi-mov" required>
 						 	</div>
-						 	<div class="form-group">
+						 	<div class="form-group col-3">
 						  		<label for="di-mov">Data Início</label>
 						  		<input type="text" class="form-control" id="di-mov" placeholder="YYYY-mm-dd" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" name="di-mov" required>
 						 	</div>
-						 	<div class="form-group">
+						 		</div>
+							<div class="row">
+							<div class="form-inline col-12 pl-4">
+						 	<div class="form-group col-4">
 						  		<label for="hf-mov">Horário Fim</label>
 						  		<input type="text" class="form-control" id="hf-mov" placeholder="00:00" pattern="[0-9]{2}:[0-9]{2}" name="hf-mov" required>
 						 	</div>
-						 	<div class="form-group">
+						 	<div class="form-group col-4">
 						  		<label for="df-mov">Data Fim</label>
 						  		<input type="text" class="form-control" id="df-mov" placeholder="YYYY-mm-dd" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" name="df-mov" required>
 						 	</div>
-						 	<div class="my-3 text-right">
-								<button type="submit" name="mov-env" class="btn btn-primary">Cadastrar</button>
+						 	<div class="my-3 text-right col-4">
+								<button type="submit" name="btn-cadastrar-movimentacao" class="btn btn-primary">Cadastrar</button>
+							</div>
+							</div>
+							</div>	
+						</div>
+							<%if (insertMovResponse != null && request.getParameter("btn-cadastrar-movimentacao") != null){ %><p><%= insertMovResponse %></p><%} 
+							else if(errorMessageInsertMov != null && request.getParameter("btn-cadastrar-movimentacao") != null){ %><p><%= errorMessageInsertMov %> </p><%} %>
+							</form>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-1">
+			</div>
+		</div>
+		
+	
+
+
+<!-- Delete de Movimentação -->
+
+<% 
+
+String errorMessageMovDelete= null;
+String deleteMovResposta = null;
+try{
+
+
+int deleteInput = Integer.parseInt(request.getParameter("nri"));
+
+Connection connection = ConnectionFactory.getConnection();
+
+PreparedStatement preparedstatement = connection.prepareStatement("DELETE FROM movimentacao WHERE id = ?");
+
+preparedstatement.setInt(1, deleteInput);
+
+int rows = preparedstatement.executeUpdate();
+if(rows > 0) {
+	deleteMovResposta = "Excluído";
+	//response.sendRedirect("index.jsp");
+}
+	connection.close();
+}
+catch(Exception ex){
+	errorMessageMovDelete = "Não foi possível localizar o container nos registros"; 
+}
+%>
+
+<!-- Select de movimentação -->
+				
+<div class="row my-2">
+			
+					<div class="col-sm-1">
+					</div>
+					<div class="col-sm-7">
+						<form method="post" action="">
+						 	<div class="row">
+						 	<div class="form-group col-5">
+						  		<label for="busca-mov">Buscar por</label>
+						  		<select class="form-control" id="busca-mov" name="busca-mov">
+						  		<!-- 	<option value="mcliente">Cliente</option> -->
+						  			<option value="mnr_container">Container</option>
+						  			<option value="mid">Número de Movimentação</option>
+						  			<option value="mtipo_movimentacao">Tipo de Movimentação</option>
+						  			<option value="mdata_inicio">Data de Início</option>
+						  			<option value="mdata_fim">Data de Término</option>	
+						  		</select>
+						  </div>
+						  	<div class="form-group col-5">
+						  		<label for="busca">Informe (Case Sensitive) </label>
+						  		<input type="text" class="form-control" id="mov-busca" name="mov-busca" >
+						 	</div>
+							<div class="form-group col-2 text-right pt-4">
+								<button type="submit" name="btn-mov-busca" class="btn btn-primary">Buscar</button>
+							</div>
 							</div>
 						</form>
 					</div>
 					<div class="col-sm-2">
 					</div>
 				</div>
-			</div>
-			<div class="col-sm-2">
-			</div>
-		</div>
+
+<table class="table table-hover border border-1" id="c-tb">
+	<thead class="thead bg-primary text-white"><tr><th>Código</th><th>Container</th><th>Movimentação</th><th>Data de Início</th><th>Hora</th><th>Data Fim</th><th>Hora</th><th>Opções</th></tr></thead>
+<%
+
+String selectValue= null;
+String selectInput= null;
+String errorMessageBusca= null;
+
+if(request.getParameter("btn-mov-busca")!=null){
+try{
+selectValue = request.getParameter("busca-mov").toString();
+selectInput = request.getParameter("mov-busca");
+String sql = null;
+switch(selectValue){
+/* case "mcliente": sql = "SELECT * FROM movimentacao WHERE cliente like ?";
+break;  */
+case "mnr_container": sql = "SELECT * FROM movimentacao WHERE container_mov like ?";
+break;
+case "mid": sql = "SELECT * FROM movimentacao WHERE id like ?";
+break;
+case "mtipo_movimentacao": sql = "SELECT * FROM movimentacao WHERE tipo_movimentacao like ?";
+break;
+case "mdata_inicio": sql = "SELECT * FROM movimentacao WHERE data_inicio like ?";
+break;
+case "mdata_fim": sql = "SELECT * FROM movimentacao WHERE data_fim like ?";
+break;
+} 
+ 
+Connection connection = ConnectionFactory.getConnection();
+
+PreparedStatement preparedstatement = connection.prepareStatement(sql);
+
+preparedstatement.setString(1,"%"+ selectInput + "%");
+
+ResultSet result = preparedstatement.executeQuery();
 		
+		while (result.next()) {
+			String id = result.getString("id");
+			String conmov = result.getString("container_mov");
+			String tipomov = result.getString("tipo_movimentacao");
+			String datai = result.getString("data_inicio");
+			String horai = result.getString("hora_inicio");
+			String dataf = result.getString("data_fim");
+			String horaf = result.getString("hora_fim");
+			
+			%><tr>
+			<td  value="<%= id %>"><%= id %> </td>
+			<td  value="<%= conmov %>"><%= conmov %> </td>
+			<td  value="<%= tipomov %>"><%= tipomov %> </td>
+			<td  value="<%= datai %>"><%= datai %> </td>
+			<td  value="<%= horai %>"><%= horai %> </td>
+			<td  value="<%= dataf %>"><%= dataf %> </td>
+			<td  value="<%= horaf %>"><%= horaf %> </td>
+			<td> <a href="movimentacoes.jsp?&idmov=<%= id %>&contmov=<%= conmov %>&tpomov=<%= tipomov %>&dtmov=<%= datai %>&hoi=<%= horai %>&dtf=<%= dataf %>&hof=<%= horaf %>" type="hidden" class="btn btn-outline-primary" name="ac" value="atualizar"role="button">Editar</a>
+			 <a href="index.jsp?&nri=<%= id %>" class="btn btn-outline-danger" name="btn-delete-movimentacao2" value="deletarmov"role="button">Deletar</a> 
+			 </td></tr>	
+	<%}	
+		connection.close();
+		 }
+		catch(Exception ex){
+			errorMessageBusca = "Não foi possível localizar o container nos registros"; 
+		}
+}else{
+	try{
+		String sql = "SELECT * FROM movimentacao";
+		Connection connection = ConnectionFactory.getConnection();
+		PreparedStatement preparedstatement = connection.prepareStatement(sql);
+ResultSet result = preparedstatement.executeQuery();
 		
-		
+		while (result.next()) {
+			String id = result.getString("id");
+			String conmov = result.getString("container_mov");
+			String tipomov = result.getString("tipo_movimentacao");
+			String datai = result.getString("data_inicio");
+			String horai = result.getString("hora_inicio");
+			String dataf = result.getString("data_fim");
+			String horaf = result.getString("hora_fim");
+			
+			%><tr>
+			<td  value="<%= id %>"><%= id %> </td>
+			<td  value="<%= conmov %>"><%= conmov %> </td>
+			<td  value="<%= tipomov %>"><%= tipomov %> </td>
+			<td  value="<%= datai %>"><%= datai %> </td>
+			<td  value="<%= horai %>"><%= horai %> </td>
+			<td  value="<%= dataf %>"><%= dataf %> </td>
+			<td  value="<%= horaf %>"><%= horaf %> </td>
+			<td> <a href="update.jsp?&nri=<%= id %>&contmov=<%= conmov %>&tpomov=<%= tipomov %>&dtmov=<%= datai %>&hoi=<%= horai %>&dtf=<%= dataf %>&hof=<%= horaf %>" type="hidden" class="btn btn-outline-primary" name="movac" value="atualizar"role="button">Editar</a>
+			 <a href="movimentacoes.jsp?&nri=<%= id %>" class="btn btn-outline-danger" name="btn-delete-movimentacao" value="deletarmov"role="button">Deletar</a> 
+			 </td></tr>	
+	<%}	
+		connection.close();	 
+	}
+	catch(Exception ex){
+		errorMessageBusca = "Não foi possível localizar o container nos registros"; 
+	}
+}
+%>
+</table>
+<%if (deleteMovResposta != null && request.getParameter("btn-cadastrar-movimentacao") != null){ %><p><%= deleteMovResposta %></p><%} 
+else if(errorMessageMovDelete != null && request.getParameter("btn-cadastrar-movimentacao") != null){ %><p><%= errorMessageMovDelete %> </p><%} %>
+

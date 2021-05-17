@@ -57,6 +57,31 @@ else { %>
 </p>
 </div>
 <div class="card-body">
+<h2>Nota de Atualização do Software 1.5.0</h2>
+</div>
+<div class="card-body">
+<h3>Geral</h3>
+<p>
+	Produto: T2S SGMC: Software de Gerenciamento de Movimentações de Containeres<br/>
+	Versão Atual: 1.3.0<br/>
+	Data de Lançamento: 17/05/2021
+</p>
+</div>
+<div class="card-body">
+<h3>Sumário do Lançamento</h3>
+<p>
+	O patch 1.7.0 vem com as seguintes funcionalidades:<br/>
+	- Conclusão do CRUD básico de Movimentação;<br/>
+	- Ferramenta inicial de busca de Movimentação;<br/>
+	- Ajuste na ferramenta inicial de busca de Containers;
+	- Ajustes no design;
+	- Ajustes na navegabilidade;
+	- Bug fix de segurança;
+	- Exclusão da página delete;.
+	<br/>
+</p>
+</div>
+<div class="card-body">
 <h2>Nota de Atualização do Software 1.3.0</h2>
 </div>
 <div class="card-body">

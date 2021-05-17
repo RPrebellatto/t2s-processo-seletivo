@@ -27,15 +27,16 @@
 		preparedstatement.setString(3, tipoInput);
 		preparedstatement.setString(4, statusInput);
 		preparedstatement.setString(5, categoriaInput);
+	
 		
 		int rows = preparedstatement.executeUpdate();
 		if(rows > 0) {
-			insertResponse = "Foi feita uma inclusão no banco";
+			insertResponse = "Cadastrado com sucesso!";
 			connection.close();
 		}
 	}
 	catch (Exception ex){
-		errorMessage = "Dados inválidos";
+		errorMessage = "Não foi possível efetuar o cadastro";
 	}
 %>
 	<script src="https://developers.google.com/speed/libraries/devguide#jquery%22%3E"></script>
@@ -43,77 +44,91 @@
 	<script src="//cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 	
 		<div class="row">
-			<div class="col-sm-3">
+			<div class="col-sm-1">
 			</div>
-			<div class="col-sm-7 p-3 m-5 border border-1"  style="width:60vw;">
-				<div class="text-center p-3 m-3  text-primary rounded-sm">
+			<div class="col-sm-10 p-1 m-3 border border-1">  <!-- style="width:60vw;" -->
+				<div class="text-center p-1 m-3  text-primary rounded-sm">
 					<h3>Cadastrar Container</h3>
 				</div>
 					<!-- TODO: Validation checks past html inputs -->
 				<div class="row">
-					<div class="col-sm-1">
-					</div>
-					<div class="col-sm-7">
+					<div class="col-sm-12">
 						<form method="post" action="">
-							<div class="form-group">
-						  		<label for="cliente">Cliente</label>
+						
+						<div class="row">
+						<div class="form-inline col-6">
+							<div class="form-group col-sm-6">
+						  		<label class="text-primary" for="cliente">Cliente</label>
 						  		<input type="text" class="form-control" id="cliente" name="cliente" required>
 						 	</div>
-						 	<div class="form-group">
-						  		<label for="nr_container">Número do Container</label>
+						 	<div class="form-group col-sm-6">
+						  		<label class="text-primary" for="nr_container">Número do Container</label>
 						  		<input type="text" class="form-control" id="nr_container" name="nr_container" placeholder="AAAA8888888" pattern="[A-Za-z]{4}[0-9]{7}" style="text-transform:uppercase;" required><br/>
 						 	</div>
-						 	<label for="tipo">Tipo: </label>
-						 	<div class="form-check-inline">
+						</div>
+						<div class="form-inline col-6">
+							<div class="form-group col-2">
+						 	<label class="text-primary text-center" for="tipo">Tipo </label>
+						 	<div class="form-check">
 						 		<label class="form-check-label" for="20">
 								<input type="radio" id="20" name="tipo" class="form-check-input" value="20" required>20</label>
 							</div>
-						 	<div class="form-check-inline">
+						 	<div class="form-check">
 								<label class="form-check-label" for="40">
 								<input type="radio" id="40" name="tipo" class="form-check-input" value="40" required>40</label>
 						 	</div>
-						 	<br/>
-						 	<label for="status">Status: </label>
-						 	<div class="form-check-inline">
+						 	</div>
+						 	<div class="form-group col-2">
+						 	<label class="text-primary text-center" for="status">Status </label>
+						 	<div class="form-check">
 						 		<label class="form-check-label" for="vazio">
 								<input type="radio" id="vazio" name="status" class="form-check-input" value="vazio" required>Vazio</label>
 							</div>
-						 	<div class="form-check-inline">
+						 	<div class="form-check">
 						 		<label class="form-check-label" for="cheio">	
 								<input type="radio" id="cheio" name="status" class="form-check-input" value="cheio" required>Cheio</label>
 							</div>
-							<br/>
-							<label for="categoria">Categoria: </label>
-						 	<div class="form-check-inline">
+							</div>
+							<div class="form-group col-4">
+							<label class="text-primary text-center" for="categoria">Categoria </label>
+						 	<div class="form-check">
 						 		<label class="form-check-label" for="imp">
 								<input type="radio" id="imp" name="categoria" class="form-check-input" value="importação" required>Importação</label>
 							</div>
-						 	<div class="form-check-inline">
+						 	<div class="form-check">
 						 		<label class="form-check-label" for="exp">	
 								<input type="radio" id="exp" name="categoria" class="form-check-input" value="exportação" required>Exportação</label>
 							</div>
-							<div class="my-3 text-right">
-								<button type="submit" class="btn btn-primary">Submit</button>
 							</div>
+					
+							<div class="my-3 text-right col-1">
+								<button type="submit" name="btn-insert-container" class="btn btn-primary">Cadastrar</button>
+							</div>
+							
+						</div>
+							
+						</div>
+							<%if (insertResponse != null && request.getParameter("btn-insert-container") != null){ %><p><%= insertResponse %></p><%} 
+							else if(errorMessage != null && request.getParameter("btn-insert-container") != null){ %><p><%= errorMessage %> </p><%} %>
 						</form>
-					</div>
-					<div class="col-sm-2">
 					</div>
 				</div>
 			</div>
-			<div class="col-sm-2">
+			<div class="col-sm-1">
 			</div>
 		</div>
 		
 <!-- Consulta Container -->		
-
-<div class="row">
+		
+			<div class="row my-2">
+			
 					<div class="col-sm-1">
 					</div>
 					<div class="col-sm-7">
 						<form method="post" action="">
-						 	<div class="form-group">
-						  		<label for="select-busca">Buscar por</label>
+						 	<div class="row">
+						 	<div class="form-group col-6">
+						  		<label for="select-busca">Buscar por:</label>
 						  		<select class="form-control" id="sel-busca" name="select-busca">
 						  			<option value="cliente">Cliente</option>
 						  			<option value="nr_container">Número</option>
@@ -122,11 +137,13 @@
 						  			<option value="categoria">Categoria</option>
 						  		</select>
 						  	</div>
-						  	<div class="form-group">
+						  	<div class="form-group col-6">
 						  		<label for="busca">Informe: </label>
 						  		<input type="text" class="form-control" id="ipt-busca" name="busca" >
 						 	</div>
+						 	</div>
 							<div class="my-3 text-right">
+								<label>Mantenha o campo <span class="font-italic">Informe</span> vazio para listar todos os containeres</label>
 								<button type="submit" class="btn btn-primary">Buscar</button>
 							</div>
 						</form>
@@ -193,19 +210,14 @@
 %>
 </table>
 
-<script>
-
-$(document).ready( function () {
-    $('#c_tb').DataTable();
-} );
-</script>
 <!-- Exclusão de Container	 -->	
 
 <% 
-String deleteInput= null;
+
 String errorMessageDelete= null;
 String deleteResposta = null;
 try{
+String deleteInput= null;
 deleteInput = request.getParameter("nrc").toString();
 
 Connection connection = ConnectionFactory.getConnection();

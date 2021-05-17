@@ -1,9 +1,9 @@
 <%@ page pageEncoding="UTF-8"%>
 
-<div class="row p-3 my-3 bg-primary text-white">
+<div class="row p-2 my-1 border border-right-0 border-left-0 border-top-0 border-bottom-1 border-primary text-primary">
 	<div class="col-sm-8">
 		<h1>T2S</h1>
-		<h2>Soluções em Tecnologia Portuária</h2>
+		<h5>Soluções em Tecnologia Portuária</h5>
 	</div>
 	<div class="col-sm-4">
 	</div>

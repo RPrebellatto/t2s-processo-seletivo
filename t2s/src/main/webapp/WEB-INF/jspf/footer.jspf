@@ -1,6 +1,13 @@
 <%@ page pageEncoding="UTF-8"%>
 
-<div class="row p-3 my-3 text-primary text-center">
+<div class="row p-3 my-3 bg-primary text-white">
+	<div class="col-sm-3">
+	</div>
+	<div class="col-sm-6 text-center">
 		<h1>T2S</h1>
-	 <h5><%= new java.util.Date() %></h5>
+		<h5>Soluções em Tecnologia Portuária</h5>
+		<h6><%= new java.util.Date() %></h6>
+	</div>
+	<div class="col-sm-3">
+	</div>
 </div>

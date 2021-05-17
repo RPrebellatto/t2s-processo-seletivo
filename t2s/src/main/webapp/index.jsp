@@ -28,8 +28,19 @@
 	</div>
 	<%if (session.getAttribute("user.log") == "true"){
 	%>
-	
-	<a href="movimentacoes.jsp?" class="btn btn-outline-primary" role="button">Movimentações</a>
+	<div class="row">
+	<ul class="list-inline text-center col-sm-12">
+  			<li class="list-inline-item">
+    			<a href="index.jsp?" class="btn btn-outline-primary" role="button">Containeres</a>	
+  			</li>
+			<li class="list-inline-item">
+			    <a href="movimentacoes.jsp?" class="btn btn-outline-primary" role="button">Movimentações</a>
+			</li>
+			</ul>	
+	</div>
+		
+					
+		
 		<%@include file="WEB-INF/jspf/container.jspf" %>	
 	
 	<%} 
@@ -83,14 +94,10 @@
 		</div>
 	</div>
 	<%} %>
-	<div class="row p-3 my-3 text-primary">
-		<div class="col-sm-4">
-		</div>
-		<div class="col-sm-4">	
+	<div class="row">
+		<div class="col-sm-12">
 			<%@include file="WEB-INF/jspf/footer.jspf" %>
-		</div>
-		<div class="col-sm-4">
-	</div>
+		</div>	
 	</div>
 </div>
 </body>
